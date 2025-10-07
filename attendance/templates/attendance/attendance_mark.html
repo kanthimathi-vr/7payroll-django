@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="h3 text-primary mb-4"><i class="bi bi-clock me-2"></i> Daily Time Clock</h1>
+        
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5 text-center">
+                <p class="text-muted lead">Today is: **{{ today|date:"l, F j, Y" }}**</p>
+                <i class="bi bi-person-workspace display-1 text-primary mb-4"></i>
+
+                {% if has_checked_in and has_checked_out %}
+                    <div class="alert alert-success mt-4">
+                        <i class="bi bi-check-circle-fill me-2"></i> **You have successfully clocked in and out for today.**
+                    </div>
+                    <p class="mt-3">
+                        **Clock In:** <span class="badge bg-primary">{{ attendance.check_in_time|date:"H:i" }}</span> | 
+                        **Clock Out:** <span class="badge bg-primary">{{ attendance.check_out_time|date:"H:i" }}</span>
+                    </p>
+
+                {% elif has_checked_in %}
+                    <div class="alert alert-info mt-4">
+                        <i class="bi bi-arrow-down-left-square me-2"></i> **You are currently clocked in.**
+                    </div>
+                    <p class="mt-3">Clocked in at: <span class="badge bg-primary">{{ attendance.check_in_time|date:"H:i" }}</span></p>
+
+                    <a href="{% url 'mark_attendance' %}?action=check_out" class="btn btn-danger btn-lg mt-3 w-75">
+                        <i class="bi bi-box-arrow-right me-2"></i> **CLOCK OUT**
+                    </a>
+
+                {% else %}
+                    <div class="alert alert-warning mt-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> **You have not clocked in yet.**
+                    </div>
+
+                    <a href="{% url 'mark_attendance' %}?action=check_in" class="btn btn-success btn-lg mt-3 w-75">
+                        <i class="bi bi-box-arrow-in-left me-2"></i> **CLOCK IN**
+                    </a>
+                {% endif %}
+                
+                <hr class="mt-5">
+                <a href="{% url 'attendance_calendar' %}" class="btn btn-outline-primary mt-3">
+                    <i class="bi bi-calendar-check me-2"></i> View My Monthly Attendance
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

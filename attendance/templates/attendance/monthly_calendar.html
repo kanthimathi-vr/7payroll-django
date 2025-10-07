@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Attendance Calendar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 text-primary">
+        <i class="bi bi-calendar-check me-2"></i> Attendance - {{ view_employee.user.get_full_name }}
+    </h1>
+    <div>
+        <a href="{{ prev_month_url }}" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-chevron-left"></i> Previous
+        </a>
+        <a href="{{ next_month_url }}" class="btn btn-outline-primary btn-sm">
+            Next <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+</div>
+
+<h3 class="text-secondary mb-3">{{ month_name }} {{ year }}</h3>
+
+<table class="table table-bordered text-center align-middle">
+    <thead class="table-primary">
+        <tr>
+            {% for weekday in weekdays %}
+                <th>{{ weekday }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in calendar_weeks %}
+        <tr>
+            {% for day in week %}
+                {% if day.day %}
+                    <td class="{% if day.is_today %}table-info{% endif %}">
+                        <div class="fw-bold">{{ day.day }}</div>
+                        {% if day.status %}
+                            <small class="d-block">
+                                {% if day.status == 'P' %}
+                                    <span class="text-success fw-bold" title="Check-in: {{ day.check_in|default:'N/A' }}, Check-out: {{ day.check_out|default:'N/A' }}">Present</span>
+                                {% elif day.status == 'A' %}
+                                    <span class="text-danger fw-bold">Absent</span>
+                                {% elif day.status == 'L' %}
+                                    <span class="text-warning fw-bold">Leave</span>
+                                {% elif day.status == 'U' %}
+                                    <span class="text-secondary fw-bold">Unmarked</span>
+                                {% endif %}
+                            </small>
+                        {% endif %}
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="mt-4">
+    <a href="{% url 'attendance:mark_attendance' %}" class="btn btn-primary">
+        <i class="bi bi-clock me-1"></i> Mark Attendance
+    </a>
+</div>
+{% endblock %}

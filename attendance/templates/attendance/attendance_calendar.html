@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 text-primary mb-4"><i class="bi bi-calendar-event me-2"></i> Attendance Calendar</h1>
+        <p class="lead text-muted">Viewing attendance for **{{ view_employee.user.get_full_name|default:view_employee.user.username }}**</p>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded shadow-sm">
+            <a href="{{ prev_month_url }}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Previous</a>
+            <h2 class="h4 mb-0 text-center">{{ month_name }} {{ year }}</h2>
+            <a href="{{ next_month_url }}" class="btn btn-outline-primary">Next <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="card shadow-lg">
+            <div class="card-body p-2">
+                <div class="row g-0 text-center fw-bold text-muted border-bottom mb-2">
+                    {% for day_name in weekdays %}
+                    <div class="col p-2">{{ day_name }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="row g-0 text-center">
+                {% for day_data in calendar_days %}
+                    {% if day_data.day %}
+                    <div class="col p-2 border border-light calendar-day-box 
+                        {% if day_data.is_today %}bg-warning bg-opacity-25{% endif %}">
+                        
+                        <div class="day-number fw-bold {% if day_data.is_today %}text-primary{% endif %}">{{ day_data.day }}</div>
+                        
+                        <div class="status-icon mt-1">
+                            {% if day_data.status == 'P' %}
+                                <i class="bi bi-check-circle-fill text-success" title="Present"></i>
+                            {% elif day_data.status == 'A' %}
+                                <i class="bi bi-x-octagon-fill text-danger" title="Absent"></i>
+                            {% elif day_data.status == 'L' %}
+                                <i class="bi bi-bell-fill text-warning" title="Leave"></i>
+                            {% else %}
+                                <i class="bi bi-question-circle text-muted" title="Unmarked"></i>
+                            {% endif %}
+                        </div>
+                        
+                        <small class="d-block text-muted">
+                            {% if day_data.status == 'P' %}
+                                {{ day_data.check_in }} - {{ day_data.check_out }}
+                            {% endif %}
+                        </small>
+                    </div>
+                    {% else %}
+                    <div class="col p-2 text-muted-opacity-50 border border-light"></div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 p-3 bg-light rounded shadow-sm">
+            <h5 class="h6 mb-3">Attendance Legend:</h5>
+            <span class="badge bg-success me-2"><i class="bi bi-check-circle-fill"></i> Present (P)</span>
+            <span class="badge bg-danger me-2"><i class="bi bi-x-octagon-fill"></i> Absent (A)</span>
+            <span class="badge bg-warning me-2 text-dark"><i class="bi bi-bell-fill"></i> Leave (L)</span>
+            <span class="badge bg-secondary me-2"><i class="bi bi-question-circle"></i> Unmarked (U)</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    /* Ensure the calendar grid wraps nicely, assuming 7 columns */
+    .calendar-day-box {
+        min-height: 100px; /* Provides visual structure for each day */
+    }
+    .col {
+        flex-basis: 14.2857%; /* 100% / 7 days */
+        max-width: 14.2857%;
+    }
+</style>
+{% endblock %}

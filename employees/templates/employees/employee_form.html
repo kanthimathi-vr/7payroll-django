@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-8">
+        <h1 class="h3 text-primary mb-4">
+            <i class="bi bi-person-{% if action == 'Create' %}plus{% else %}lines{% endif %} me-2"></i> {{ title }}
+            {% if employee_id %}<small class="text-muted">({{ employee_id }})</small>{% endif %}
+        </h1>
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4 p-md-5">
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h5 class="text-secondary mb-3"><i class="bi bi-person-vcard me-1"></i> User Account Details</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">{{ user_form.first_name|as_bootstrap_field:"First Name" }}</div>
+                        <div class="col-md-6">{{ user_form.last_name|as_bootstrap_field:"Last Name" }}</div>
+                        <div class="col-md-6">{{ user_form.username|as_bootstrap_field:"Username" }}</div>
+                        <div class="col-md-6">{{ user_form.email|as_bootstrap_field:"Email" }}</div>
+                        <div class="col-md-6">{{ user_form.role|as_bootstrap_field:"Role" }}</div>
+                        <div class="col-md-6">{{ user_form.is_active|as_bootstrap_field:"Is Active" }}</div>
+                        
+                        <div class="col-12">
+                            <label for="{{ user_form.password.id_for_label }}" class="form-label">Password</label>
+                            <input type="password" name="{{ user_form.password.name }}" id="{{ user_form.password.id_for_label }}" class="form-control" {% if action == 'Create' %}required{% endif %} placeholder="{% if action == 'Create' %}Enter initial password{% else %}Leave blank to keep current password{% endif %}">
+                            {% for error in user_form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+
+                    <h5 class="text-secondary mb-3"><i class="bi bi-briefcase me-1"></i> Employment and Salary Details</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">{{ profile_form.employee_id|as_bootstrap_field:"Employee ID" }}</div>
+                        <div class="col-md-4">{{ profile_form.department|as_bootstrap_field:"Department" }}</div>
+                        <div class="col-md-4">{{ profile_form.job_title|as_bootstrap_field:"Job Title" }}</div>
+                        
+                        <div class="col-md-4">{{ profile_form.basic_salary|as_bootstrap_field:"Basic Salary" }}</div>
+                        <div class="col-md-4">{{ profile_form.hra|as_bootstrap_field:"H.R.A" }}</div>
+                        <div class="col-md-4">{{ profile_form.other_allowance|as_bootstrap_field:"Other Allowance" }}</div>
+                        
+                        <div class="col-md-4">{{ profile_form.pf_deduction|as_bootstrap_field:"P.F. Deduction" }}</div>
+                        <div class="col-md-4">{{ profile_form.tax_deduction|as_bootstrap_field:"Tax Deduction" }}</div>
+                        <div class="col-md-4">{{ profile_form.hire_date|as_bootstrap_field:"Hire Date" }}</div>
+                        
+                        <div class="col-12">{{ profile_form.phone_number|as_bootstrap_field:"Phone Number" }}</div>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-lg btn-primary">
+                            <i class="bi bi-save me-2"></i> {{ action }} Employee
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% load humanize %}
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.form-control, .form-select').forEach(function(element) {
+            if (!element.classList.contains('form-control')) {
+                element.classList.add('form-control');
+            }
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(function(element) {
+            element.classList.remove('form-control');
+            element.classList.add('form-check-input');
+        });
+    });
+</script>
+{% endblock %}

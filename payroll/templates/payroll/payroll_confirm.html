@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-lg border-0 mt-5">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0"><i class="bi bi-calculator me-2"></i> Payroll Generation</h4>
+            </div>
+            <div class="card-body p-4 p-md-5 text-center">
+                <i class="bi bi-cash-coin display-3 text-warning mb-4"></i>
+                <h5 class="card-title text-danger mb-4">
+                    **WARNING: This action will calculate and overwrite existing pay slips for the selected month.**
+                </h5>
+                
+                <p class="lead">
+                    Confirm generation for:
+                    <strong class="text-primary">{{ month_name }} {{ year }}</strong>
+                </p>
+
+                <form method="post" action="{% url 'payroll_generate' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="year" value="{{ year }}">
+                    <input type="hidden" name="month" value="{{ month }}">
+
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-6">
+                            <label for="id_month_select" class="form-label">Select Month:</label>
+                            <select name="month" id="id_month_select" class="form-select">
+                                {% for m in "123456789012"|make_list %}
+                                    {% with forloop.counter as m_val %}
+                                    <option value="{{ m_val }}" {% if m_val == month %}selected{% endif %}>
+                                        {{ m_val|stringformat:"02d" }} - {% cycle "January" "February" "March" "April" "May" "June" "July" "August" "September" "October" "November" "December" %}
+                                    </option>
+                                    {% endwith %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_year_select" class="form-label">Select Year:</label>
+                            <input type="number" name="year" id="id_year_select" class="form-control" value="{{ year }}" min="2020" max="2050">
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg mt-3">
+                            <i class="bi bi-check-circle-fill me-2"></i> **Generate Payroll Now**
+                        </button>
+                        <a href="{% url 'payroll_slips' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% load i18n %}
+{% load static %}
+{% block extra_js %}
+{% endblock %}

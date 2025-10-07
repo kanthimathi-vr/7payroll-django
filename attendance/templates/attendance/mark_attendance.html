@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3 text-primary"><i class="bi bi-clipboard-check"></i> Mark Attendance</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label class="form-label fw-bold">Action</label>
+            <select name="action" class="form-select">
+                <option value="check_in">Check In</option>
+                <option value="check_out">Check Out</option>
+                <option value="leave">Leave</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Submit</button>
+        <a href="{% url 'attendance:calendar_view' %}" class="btn btn-secondary">Back to Calendar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Central Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4 text-primary"><i class="bi bi-speedometer2 me-2"></i> Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+
+{% if is_admin %}
+<div class="row g-4">
+    <div class="col-12"><h3 class="h4 text-secondary border-bottom pb-2">Admin Overview</h3></div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card bg-primary text-white shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-people display-4 me-3"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase opacity-75">Total Employees</p>
+                        <h4 class="mb-0 display-6 fw-bold">{{ total_employees|intcomma }}</h4>
+                    </div>
+                </div>
+                <small class="mt-2 d-block text-white-50"><i class="bi bi-person-plus"></i> {{ new_hires_this_month }} new hires this month</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card bg-success text-white shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-check display-4 me-3"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase opacity-75">Present Today</p>
+                        <h4 class="mb-0 display-6 fw-bold">{{ present_today_count }}</h4>
+                    </div>
+                </div>
+                <small class="mt-2 d-block text-white-50"><i class="bi bi-person-x"></i> {{ absent_or_unmarked_today }} Absent/Unmarked</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card bg-warning text-dark shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-hourglass-split display-4 me-3"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase opacity-75">Pending Pay Slips</p>
+                        <h4 class="mb-0 display-6 fw-bold">{{ pending_payrolls }}</h4>
+                    </div>
+                </div>
+                <a href="{% url 'payroll:payroll_slips' %}" class="stretched-link text-decoration-none text-dark">
+                    <small class="mt-2 d-block"><i class="bi bi-arrow-right-circle"></i> View Payroll</small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card dashboard-card bg-info text-dark shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-currency-dollar display-4 me-3"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase opacity-75">Total Net Salary (Mo.)</p>
+                        <h4 class="mb-0 display-6 fw-bold">${{ total_net_salary|floatformat:2|intcomma }}</h4>
+                    </div>
+                </div>
+                <small class="mt-2 d-block text-white-50"><i class="bi bi-check-circle"></i> For current payroll period</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-lg-6">
+        <h3 class="h4 text-secondary border-bottom pb-2"><i class="bi bi-hammer me-2"></i> Quick Actions</h3>
+        <div class="list-group shadow-sm">
+            <a href="{% url 'employee_create' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-person-plus-fill me-2 text-primary"></i> **Add New Employee**
+            </a>
+            <a href="{% url 'employee_list' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-person-lines-fill me-2 text-primary"></i> View/Edit Employee Directory
+            </a>
+            <a href="{% url 'attendance:monthly_calendar_current' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-calendar-range me-2 text-primary"></i> Review Monthly Attendance
+            </a>
+            <a href="{% url 'payroll:payroll_generate' %}" class="list-group-item list-group-item-action">
+                <i class="bi bi-calculator me-2 text-primary"></i> **Generate Payroll for Month**
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <h3 class="h4 text-secondary border-bottom pb-2"><i class="bi bi-graph-up-arrow me-2"></i> Payroll History</h3>
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-muted py-5">
+                <p class="mb-0">Chart/Report integration coming soon.</p>
+                <i class="bi bi-bar-chart display-4"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row g-4">
+    <div class="col-12"><h3 class="h4 text-secondary border-bottom pb-2">My Overview</h3></div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card dashboard-card bg-info text-white shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-calendar-event display-4 me-3"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase opacity-75">Present Days (This Month)</p>
+                        <h4 class="mb-0 display-6 fw-bold">{{ present_days }}</h4>
+                    </div>
+                </div>
+                <a href="{% url 'attendance:monthly_calendar_current' %}" class="stretched-link text-decoration-none text-white-50">
+                    <small class="mt-2 d-block"><i class="bi bi-calendar-day"></i> View full calendar</small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card dashboard-card bg-primary text-white shadow-lg">
+            <div class="card-body text-center">
+                <i class="bi bi-clock-fill display-3 mb-3"></i>
+                <h4 class="card-title">Attendance Time Clock</h4>
+                <p class="card-text opacity-75">Click to check in or check out for today.</p>
+                <a href="{% url 'attendance:mark_attendance' %}" class="btn btn-light btn-lg w-100 mt-2">
+                    **<i class="bi bi-arrow-right-circle"></i> Mark Attendance**
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 col-lg-4">
+        <div class="card dashboard-card shadow-lg">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-file-earmark-bar-graph display-4 me-3 text-success"></i>
+                    <div>
+                        <p class="mb-0 text-uppercase text-muted">Last Paycheck</p>
+                        {% if last_slip %}
+                            <h4 class="mb-0 fw-bold text-success">${{ last_slip.net_salary|floatformat:2|intcomma }}</h4>
+                            <small class="text-muted">{{ last_slip.month_year|date:"F Y" }}</small>
+                        {% else %}
+                            <h4 class="mb-0 fw-bold text-muted">N/A</h4>
+                            <small class="text-muted">No slips found.</small>
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'payroll:payroll_slips' %}" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-eye"></i> View All My Pay Slips
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
